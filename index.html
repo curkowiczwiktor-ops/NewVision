@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewVision Voting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🌍 NewVision
+    </h1>
+    <p>ONLINE VOTING 2026</p>
+  </header>
+
+  <main>
+    <h2>Choose your 3 favourite countries</h2>
+    <p id="counter">Selected: 0/3</p>
+    <div id="countries"></div>
+    <button id="submit" disabled>SUBMIT VOTES</button>
+    <p id="message"></p>
+
+    <section class="admin">
+      <h2>ADMIN PANEL</h2>
+      <input id="password" type="password" placeholder="Admin password">
+      <button onclick="login()">LOGIN</button>
+      <div id="results" class="hidden">
+        <h3>Voting results</h3>
+        <div id="scoreboard"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
