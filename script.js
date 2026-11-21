@@ -1,19 +1,21 @@
 
 const countries = [
-  ["🇵🇱", "Polska"],
   ["🇲🇰", "Macedonia"],
-  ["🇦🇲", "Armenia"],
-  ["🇪🇸", "Hiszpania"],
-  ["🇵🇦", "Panama"],
-  ["🇵🇭", "Filipiny"],
-  ["🇮🇹", "Włochy"],
-  ["🇩🇰", "Dania"],
-  ["🇱🇦", "Laos"],
-  ["🇵🇹", "Portugalia"],
-  ["🇧🇬", "Bulgaria"],
-  ["🇭🇷", "Chorwacja"],
-  ["🇻🇳", "Wietnam"],
-  ["🇪🇪", "Estonia"]
+  ["🇵🇦","Panama"],
+  ["🇵🇭","Filipiny"],
+  ["🇩🇰","Dania"],
+  ["🇱🇦","Laos"],
+  ["🇧🇬","Bułgaria"],
+  ["🇭🇷","Chorwacja"],
+  ["🇫🇷","Francja"],
+  ["🇻🇳","Wietnam"],
+  ["🇵🇱","Polska"],
+  ["🇪🇪","Estonia"],
+  ["🇦🇲","Armenia"],
+  ["🇵🇹","Portugalia"],
+  ["🇪🇸","Hiszpania"],
+  ["🇮🇹","Włochy"],
+  ["🇯🇵","Japonia"],
 ];
 
 const ADMIN_PASSWORD = "55434Wiktor";
