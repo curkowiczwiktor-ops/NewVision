@@ -17,6 +17,7 @@ const countries = [
   ["🇮🇹","Włochy"],
   ["🇯🇵","Japonia"],
   ["🇻🇦","Watykan"],
+  ["🇦🇱","Albania"],
 ];
 
 const ADMIN_PASSWORD = "55434Wiktor";

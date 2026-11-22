@@ -10,7 +10,7 @@ const votesFile = path.join(root, "votes.json");
 const countryNames = [
   "Macedonia", "Panama", "Filipiny", "Dania", "Laos", "Bułgaria",
   "Chorwacja", "Francja", "Wietnam", "Polska", "Estonia", "Armenia",
-  "Portugalia", "Hiszpania", "Włochy", "Japonia", "Watykan"
+  "Portugalia", "Hiszpania", "Włochy", "Japonia", "Watykan", "Albania"
 ];
 
 function emptyVotes() {
