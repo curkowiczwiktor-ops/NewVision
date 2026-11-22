@@ -40,7 +40,7 @@ const countries = [
   "Portugal",
   "San Marino",
   "Spain",
-  "Ukraine"
+  "Panama"
 ];
 
 // ELEMENTS
