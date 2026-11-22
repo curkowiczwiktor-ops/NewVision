@@ -1,167 +1,137 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getDatabase, ref, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+// Konfiguracja z Twojego projektu Firebase:
+const firebaseConfig = {
+  apiKey: "AIzaSyAdFKakFclqd2jyl5DaETgK-nLwnlTQQ",
+  authDomain: "wiktorcu.firebaseapp.com",
+  databaseURL: "https://wiktorcu-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wiktorcu",
+  storageBucket: "wiktorcu.firebasestorage.app",
+  messagingSenderId: "215559486138",
+  appId: "1:215559486138:web:c4dd503c60f825e7a66083",
+  measurementId: "G-TV82PSTZXX"
+};
 
 const countries = [
-  ["🇲🇰", "Macedonia"],
-  ["🇵🇦","Panama"],
-  ["🇵🇭","Filipiny"],
-  ["🇩🇰","Dania"],
-  ["🇱🇦","Laos"],
-  ["🇧🇬","Bułgaria"],
-  ["🇭🇷","Chorwacja"],
-  ["🇫🇷","Francja"],
-  ["🇻🇳","Wietnam"],
-  ["🇵🇱","Polska"],
-  ["🇪🇪","Estonia"],
-  ["🇦🇲","Armenia"],
-  ["🇵🇹","Portugalia"],
-  ["🇪🇸","Hiszpania"],
-  ["🇮🇹","Włochy"],
-  ["🇯🇵","Japonia"],
-  ["🇻🇦","Watykan"],
-  ["🇦🇱","Albania"],
+  "Albania", "Armenia", "Cyprus", "France", "Georgia", "Ireland",
+  "Italy", "Malta", "Montenegro", "Netherlands", "North Macedonia",
+  "Poland", "Portugal", "San Marino", "Spain", "Ukraine"
 ];
 
-const ADMIN_PASSWORD = "55434Wiktor";
+const statusEl = document.querySelector("#connectionStatus");
+const countriesEl = document.querySelector("#countries");
+const countEl = document.querySelector("#selectionCount");
+const selectedEl = document.querySelector("#selectedCountries");
+const voteButton = document.querySelector("#voteButton");
+const votingSection = document.querySelector("#votingSection");
+const thankYou = document.querySelector("#thankYou");
+const resultsEl = document.querySelector("#results");
 
 let selected = [];
-let votes = JSON.parse(localStorage.getItem("votes") || "{}");
+let database = null;
+let currentUser = null;
+let isSubmitting = false;
 
-countries.forEach(([flag, name]) => {
-  if (votes[name] === undefined) {
-    votes[name] = 0;
+function showStatus(message, kind = "") {
+  statusEl.textContent = message;
+  statusEl.className = `status ${kind}`;
+}
+
+function renderSelection() {
+  countEl.textContent = `${selected.length} / 3`;
+  selectedEl.textContent = selected.join(" · ");
+  voteButton.disabled = selected.length !== 3 || !currentUser || isSubmitting;
+}
+
+function renderCountries() {
+  countriesEl.replaceChildren();
+  countries.forEach(country => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `country${selected.includes(country) ? " selected" : ""}`;
+    button.textContent = country;
+    button.setAttribute("aria-pressed", String(selected.includes(country)));
+    button.addEventListener("click", () => {
+      if (selected.includes(country)) {
+        selected = selected.filter(item => item !== country);
+      } else if (selected.length < 3) {
+        selected = [...selected, country];
+      }
+      renderCountries();
+      renderSelection();
+    });
+    countriesEl.append(button);
+  });
+}
+
+async function startFirebase() {
+  try {
+    showStatus("Łączenie z Firebase…");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    database = getDatabase(app);
+
+    await signInAnonymously(auth);
+    onAuthStateChanged(auth, user => {
+      currentUser = user;
+      if (user) {
+        showStatus("Połączono z Firebase. Możesz głosować.", "ok");
+        voteButton.disabled = selected.length !== 3 || isSubmitting;
+      } else {
+        showStatus("Nie udało się zalogować anonimowo. Sprawdź Authentication → Sign-in method → Anonymous.", "error");
+      }
+    });
+
+    onValue(ref(database, "votes"), snapshot => {
+      const votes = snapshot.val() || {};
+      resultsEl.replaceChildren();
+      countries.forEach(country => {
+        const row = document.createElement("div");
+        row.className = "result-row";
+        const name = document.createElement("span");
+        name.textContent = country;
+        const total = document.createElement("strong");
+        total.textContent = String(Number(votes[country] || 0));
+        row.append(name, total);
+        resultsEl.append(row);
+      });
+    }, error => {
+      showStatus(`Błąd odczytu bazy: ${error.message}. Sprawdź reguły Realtime Database.`, "error");
+    });
+  } catch (error) {
+    console.error("Firebase error:", error);
+    showStatus(`Nie udało się połączyć: ${error.code || error.message}`, "error");
+  }
+}
+
+voteButton.addEventListener("click", async () => {
+  if (!currentUser || selected.length !== 3 || isSubmitting) return;
+  isSubmitting = true;
+  renderSelection();
+  try {
+    const votesRef = ref(database, "votes");
+    const result = await runTransaction(votesRef, current => {
+      const next = current && typeof current === "object" ? current : {};
+      selected.forEach(country => {
+        next[country] = Number(next[country] || 0) + 1;
+      });
+      return next;
+    });
+    if (!result.committed) throw new Error("Głos nie został zapisany.");
+    votingSection.classList.add("hidden");
+    thankYou.classList.remove("hidden");
+    showStatus("Głos zapisany w Firebase.", "ok");
+  } catch (error) {
+    console.error("Vote error:", error);
+    showStatus(`Nie udało się zapisać głosu: ${error.code || error.message}. Sprawdź reguły bazy.`, "error");
+  } finally {
+    isSubmitting = false;
+    renderSelection();
   }
 });
 
-const container = document.getElementById("countries");
-
-// WYŚWIETLANIE KRAJÓW
-
-function render() {
-  container.innerHTML = "";
-
-  countries.forEach(([flag, name]) => {
-    const button = document.createElement("button");
-
-    button.className = "country" +
-      (selected.includes(name) ? " selected" : "");
-
-    button.textContent = flag + " " + name;
-
-    button.onclick = () => {
-      if (selected.includes(name)) {
-        selected = selected.filter(country => country !== name);
-      } else if (selected.length < 3) {
-        selected.push(name);
-      }
-
-      render();
-    };
-
-    container.appendChild(button);
-  });
-
-  document.getElementById("counter").textContent =
-    `Selected: ${selected.length}/3`;
-
-  document.getElementById("submit").disabled =
-    selected.length !== 3;
-}
-
-// ODDAWANIE GŁOSÓW I PRZEJŚCIE DO PODZIĘKOWANIA
-
-document.getElementById("submit").onclick = () => {
-  if (selected.length !== 3) {
-    alert("Select exactly 3 countries!");
-    return;
-  }
-
-  selected.forEach(name => {
-    votes[name] = (votes[name] || 0) + 1;
-  });
-
-  localStorage.setItem("votes", JSON.stringify(votes));
-
-  // Ukrycie głosowania
-  document.getElementById("votingSection").classList.add("hidden");
-
-  // Pokazanie ekranu podziękowania
-  document.getElementById("thankYou").classList.remove("hidden");
-};
-
-// LOGOWANIE ADMINA
-
-function login() {
-  const password = document.getElementById("password").value;
-
-  if (password === ADMIN_PASSWORD) {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("results").classList.remove("hidden");
-
-    showResults();
-  } else {
-    alert("Wrong password!");
-  }
-}
-
-// WYŚWIETLANIE WYNIKÓW
-
-function showResults() {
-  const board = document.getElementById("scoreboard");
-  board.innerHTML = "";
-
-  const sorted = countries
-    .map(([flag, name]) => ({
-      flag,
-      name,
-      score: votes[name] || 0
-    }))
-    .sort((a, b) => b.score - a.score);
-
-  sorted.forEach((country, index) => {
-    const row = document.createElement("div");
-    row.className = "score";
-
-    row.innerHTML = `
-      <span>${index + 1}. ${country.flag} ${country.name}</span>
-      <strong>${country.score}</strong>
-    `;
-
-    board.appendChild(row);
-  });
-
-  const total = Object.values(votes)
-    .reduce((sum, score) => sum + score, 0);
-
-  document.getElementById("totalVotes").textContent =
-    "Total votes: " + total;
-}
-
-// RESET GŁOSÓW
-
-function resetVotes() {
-  if (!confirm("Are you sure you want to reset all votes?")) {
-    return;
-  }
-
-  countries.forEach(([flag, name]) => {
-    votes[name] = 0;
-  });
-
-  localStorage.setItem("votes", JSON.stringify(votes));
-
-  selected = [];
-
-  render();
-  showResults();
-
-  alert("Votes have been reset!");
-}
-
-// WYLOGOWANIE
-
-function logout() {
-  document.getElementById("results").classList.add("hidden");
-  document.getElementById("login").classList.remove("hidden");
-  document.getElementById("password").value = "";
-}
-
-render();
+renderCountries();
+renderSelection();
+startFirebase();

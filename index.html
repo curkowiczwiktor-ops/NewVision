@@ -1,71 +1,43 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NewVision Voting 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NewVision Voting</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header class="site-header">
+    <p class="eyebrow">NEWVISION</p>
+    <h1>Voting</h1>
+    <p>Choose your 3 favourite countries</p>
+  </header>
 
-<header>
-  <h1>🌍 NewVision Voting 2026</h1>
-  <p class="subtitle">ONLINE VOTING 2026</p>
-</header>
+  <main class="panel">
+    <p id="connectionStatus" class="status" role="status">Łączenie z Firebase…</p>
 
-<main>
+    <section id="votingSection">
+      <h2>Cast your vote</h2>
+      <p class="muted">Wybierz dokładnie 3 kraje.</p>
+      <div id="countries" class="countries"></div>
+      <p class="selection-label">Twój wybór: <strong id="selectionCount">0 / 3</strong></p>
+      <div id="selectedCountries" class="selected"></div>
+      <button id="voteButton" disabled>SUBMIT VOTE</button>
+    </section>
 
-  <!-- GŁOSOWANIE -->
-  <section class="voting" id="votingSection">
-    <h2>Choose your 3 favourite countries</h2>
-    <p id="counter">Selected: 0/3</p>
+    <section id="thankYou" class="hidden">
+      <h2>Thank you for voting!</h2>
+      <p>Twój głos został zapisany.</p>
+    </section>
 
-    <div id="countries"></div>
+    <details class="admin">
+      <summary>Administrator — wyniki</summary>
+      <p class="muted">Podgląd wyników wymaga uprawnień odczytu w Firebase.</p>
+      <div id="results"><p class="muted">Wyniki pojawią się po połączeniu.</p></div>
+    </details>
+  </main>
 
-    <button id="submit" disabled>SUBMIT VOTES</button>
-    <p id="message"></p>
-  </section>
-
-  <!-- EKRAN PODZIĘKOWANIA -->
-  <section id="thankYou" class="hidden">
-    <h1>❤️ THANK YOU!</h1>
-    <h2>Thank you for voting!</h2>
-    <p>Your votes have been submitted successfully.</p>
-    <p>Enjoy NewVision Voting 2026! 🌍</p>
-  </section>
-
-  <!-- PANEL ADMINA -->
-  <section class="admin">
-    <h2>🔐 ADMIN PANEL</h2>
-
-    <div id="login">
-      <input id="password" type="password" placeholder="Admin password">
-      <button onclick="login()">LOGIN</button>
-    </div>
-
-    <div id="results" class="hidden">
-      <h3>Voting results</h3>
-      <p id="totalVotes"></p>
-
-      <div id="scoreboard"></div>
-
-      <button onclick="resetVotes()" class="reset">
-        RESET ALL VOTES
-      </button>
-
-      <button onclick="logout()" class="secondary">
-        LOGOUT
-      </button>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  NewVision Voting • 2026
-</footer>
-
-<script src="script.js"></script>
+  <footer>NewVision Voting · Demo</footer>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
