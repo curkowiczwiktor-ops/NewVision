@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewVision Voting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>NewVision Voting</h1>
+    <p>Choose your 3 favourite countries</p>
+  </header>
+
+  <main class="panel">
+    <p id="connectionStatus">Łączenie z Firebase…</p>
+
+    <section id="votingSection">
+      <h2>Cast your vote</h2>
+      <p>Wybierz dokładnie 3 kraje.</p>
+
+      <div id="countries" class="countries"></div>
+
+      <p>Twój wybór:
+        <strong id="selectionCount">0 / 3</strong>
+      </p>
+
+      <div id="selectedCountries"></div>
+
+      <button id="voteButton" type="button" disabled>
+        SUBMIT VOTE
+      </button>
+    </section>
+
+    <section id="thankYou" class="hidden">
+      <h2>Thank you for voting!</h2>
+      <p>Twój głos został zapisany.</p>
+    </section>
+
+    <section>
+      <h2>Voting results</h2>
+      <div id="results"></div>
+    </section>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
