@@ -25,22 +25,23 @@ const firebaseConfig = {
   measurementId: "G-TV82PSTZXX"
 };
 const countries = [
-  "Albania",
+  "Macedonia",
+  "Panama",
+  "Filipiny",
+  "Dania",
+  "Laos",
+  "Bułgaria",
+  "Choreacja",
+  "Francja",
+  "Wietnam",
+  "Polska",
+  "Estonia",
   "Armenia",
-  "Cyprus",
-  "France",
-  "Georgia",
-  "Ireland",
-  "Italy",
-  "Malta",
-  "Montenegro",
-  "Netherlands",
-  "North Macedonia",
-  "Poland",
   "Portugal",
-  "San Marino",
-  "Spain",
-  "Panama"
+  "Hiszpania",
+  "Japonia",
+  "Watykan",
+  "Albania"
 ];
 
 // ELEMENTS
