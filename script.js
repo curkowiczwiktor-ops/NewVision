@@ -42,7 +42,8 @@ const countries = [
   "Włochy",
   "Japonia",
   "Watykan",
-  "Albania"
+  "Albania",
+  "Australia"
 ];
 
 // ELEMENTS
